@@ -1,0 +1,21 @@
+[package]
+name = "embr-cli"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "embr — declarative project code embedding indexer."
+
+[[bin]]
+name = "embr"
+path = "src/main.rs"
+
+[dependencies]
+embr-core = { path = "../embr-core" }
+anyhow.workspace = true
+clap.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
