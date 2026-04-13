@@ -85,6 +85,10 @@ The module generates a TOML config, runs `embr watch` as a dedicated
 system user, and hardens the systemd unit (`ProtectSystem=strict`,
 `ReadOnlyPaths=[projectsRoot]`, etc.).
 
+## CI
+
+Woodpecker CI on Codeberg runs `cargo build`, `cargo test`, `cargo clippy`, and `cargo fmt --check` on every push and pull request.
+
 ## License
 
 Dual-licensed under MIT or Apache-2.0 at your option.
