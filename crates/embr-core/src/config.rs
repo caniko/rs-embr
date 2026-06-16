@@ -166,4 +166,16 @@ impl Config {
     pub fn vector_dim(&self) -> usize {
         self.embedding.vectors[0].dim
     }
+
+    pub fn query_vector(&self) -> &NamedVector {
+        self.embedding
+            .vectors
+            .iter()
+            .find(|vector| vector.name == "code")
+            .unwrap_or(&self.embedding.vectors[0])
+    }
+
+    pub fn named_vector(&self, name: &str) -> Option<&NamedVector> {
+        self.embedding.vectors.iter().find(|vector| vector.name == name)
+    }
 }

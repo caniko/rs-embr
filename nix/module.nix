@@ -11,6 +11,7 @@
   ...
 }: let
   cfg = config.services.embr;
+  safeDirectories = map (project: "${toString cfg.projectsRoot}/${project}") cfg.projects;
 
   namedVectorSubmodule = lib.types.submodule {
     options = {
@@ -54,6 +55,16 @@
       force_poll = cfg.watch.forcePoll;
     };
   };
+
+  gitConfig = pkgs.writeText "embr-gitconfig" (
+    if safeDirectories == [] then
+      ""
+    else
+      ''
+        [safe]
+        ${lib.concatMapStringsSep "\n" (dir: "\tdirectory = ${dir}") safeDirectories}
+      ''
+  );
 in {
   options.services.embr = {
     enable = lib.mkEnableOption "embr — declarative project code embedding indexer";
@@ -220,6 +231,7 @@ in {
 
       environment = {
         EMBR_CONFIG = toString configToml;
+        GIT_CONFIG_GLOBAL = toString gitConfig;
         RUST_LOG = "info,embr=debug";
       };
 

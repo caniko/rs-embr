@@ -4,8 +4,10 @@ use std::path::PathBuf;
 
 use anyhow::{Context, Result};
 use clap::{Parser, Subcommand};
+use tracing_subscriber::fmt::writer::BoxMakeWriter;
 
 mod commands;
+mod mcp;
 
 #[derive(Parser)]
 #[command(
@@ -34,6 +36,25 @@ enum Command {
     Watch,
     /// Print per-project state DB statistics.
     Status,
+    /// Search indexed code chunks.
+    Search {
+        /// Semantic query text.
+        query: String,
+
+        /// Restrict to a single indexed project.
+        #[arg(long)]
+        project: Option<String>,
+
+        /// Restrict results to paths under this prefix.
+        #[arg(long)]
+        path_prefix: Option<String>,
+
+        /// Maximum number of hits to return.
+        #[arg(long, default_value_t = 10)]
+        limit: usize,
+    },
+    /// Expose semantic code search over MCP stdio.
+    Mcp,
     /// Delete the state DB and exit. Does NOT touch qdrant.
     Reset,
 }
@@ -41,6 +62,7 @@ enum Command {
 #[tokio::main]
 async fn main() -> Result<()> {
     tracing_subscriber::fmt()
+        .with_writer(BoxMakeWriter::new(std::io::stderr))
         .with_env_filter(
             tracing_subscriber::EnvFilter::try_from_default_env()
                 .unwrap_or_else(|_| tracing_subscriber::EnvFilter::new("info,embr=debug")),
@@ -64,6 +86,13 @@ async fn main() -> Result<()> {
         Command::Index => commands::index::run(cfg, &state_dir).await,
         Command::Watch => commands::watch::run(cfg, &state_dir).await,
         Command::Status => commands::status::run(cfg, &state_dir).await,
+        Command::Search {
+            query,
+            project,
+            path_prefix,
+            limit,
+        } => commands::search::run(cfg, &state_dir, query, project, path_prefix, limit).await,
+        Command::Mcp => mcp::run(cfg).await,
         Command::Reset => commands::reset::run(&state_dir).await,
     }
 }

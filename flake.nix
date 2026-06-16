@@ -9,6 +9,10 @@
       url = "github:oxalica/rust-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    plinth = {
+      url = "git+https://codeberg.org/caniko/plinth.git?ref=refs/heads/trunk";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs @ {
@@ -17,9 +21,14 @@
     flake-parts,
     crane,
     rust-overlay,
+    plinth,
   }:
     flake-parts.lib.mkFlake {inherit inputs;} {
-      systems = ["x86_64-linux" "aarch64-linux"];
+      # rs-embr (the embr code-embedding indexer) runs only on x86_64
+      # AI hosts via infernix; no aarch64-linux consumer exists, so
+      # evaluating aarch64 outputs is dead weight that doubles
+      # `nix flake check` heap for nothing.
+      systems = ["x86_64-linux"];
 
       perSystem = {
         system,
@@ -67,6 +76,11 @@
                 --prefix PATH : ${pkgs.lib.makeBinPath [pkgs.git]}
             '';
           });
+        website = plinth.lib.${system}.mkProjectSite {
+          pname = "embr-website";
+          domain = "embr.tartanoglu.com";
+          configPath = ./website/plinth-project.toml;
+        };
       in {
         _module.args.pkgs = import nixpkgs {
           inherit system;
@@ -76,6 +90,12 @@
         packages = {
           inherit embr;
           default = embr;
+          website = website;
+          site = website;
+        };
+
+        apps.deploy-pages = plinth.lib.${system}.mkDeployPagesApp {
+          domain = "embr.tartanoglu.com";
         };
 
         checks = {

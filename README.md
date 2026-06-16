@@ -1,5 +1,9 @@
 # embr
 
+<!-- simit:badges:start -->
+![CI](https://img.shields.io/badge/CI-drift-2088ff) [![Nix](https://img.shields.io/badge/Nix-managed-5277c3)](flake.nix) [![crates.io](https://img.shields.io/badge/crates.io-ready-f46623)](https://crates.io/crates/embr-cli)
+<!-- simit:badges:end -->
+
 Declarative project code embedding indexer. Walks a list of projects,
 chunks source files (line-window for v1, tree-sitter planned), embeds
 each chunk with one or more ollama models, and upserts them into qdrant

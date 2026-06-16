@@ -6,6 +6,7 @@ use serde::{Deserialize, Serialize};
 use super::Embedder;
 use crate::{Error, Result};
 
+#[derive(Debug, Clone)]
 pub struct OllamaClient {
     base_url: String,
     http: reqwest::Client,

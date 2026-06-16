@@ -15,6 +15,7 @@ pub mod config;
 pub mod embed;
 pub mod error;
 pub mod pipeline;
+pub mod search;
 pub mod state;
 pub mod store;
 pub mod walker;
