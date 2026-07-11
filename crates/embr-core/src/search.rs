@@ -3,15 +3,17 @@
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-use crate::config::Config;
-use crate::embed::{Embedder, OllamaClient};
+use std::sync::Arc;
+
+use crate::config::{Config, EmbeddingBackend};
+use crate::embed::{Embedder, OllamaClient, OpenAiClient};
 use crate::store::qdrant::{QdrantStore, SearchOptions};
 use crate::{Error, Result};
 
 #[derive(Debug, Clone)]
 pub struct Searcher {
     cfg: Config,
-    embedder: OllamaClient,
+    embedder: Arc<dyn Embedder>,
     store: QdrantStore,
 }
 
@@ -44,7 +46,10 @@ pub struct SearchHit {
 
 impl Searcher {
     pub fn new(cfg: Config) -> Self {
-        let embedder = OllamaClient::new(&cfg.embedding.url);
+        let embedder: Arc<dyn Embedder> = match cfg.embedding.backend {
+            EmbeddingBackend::Ollama => Arc::new(OllamaClient::new(&cfg.embedding.url)),
+            EmbeddingBackend::Openai => Arc::new(OpenAiClient::new(&cfg.embedding.url)),
+        };
         let store = QdrantStore::new(&cfg.qdrant.url, &cfg.qdrant.collection);
         Self {
             cfg,
@@ -129,7 +134,9 @@ mod tests {
     use std::path::PathBuf;
 
     use super::{SearchRequest, Searcher};
-    use crate::config::{Config, EmbeddingConfig, NamedVector, QdrantConfig, WatchConfig};
+    use crate::config::{
+        Config, EmbeddingBackend, EmbeddingConfig, NamedVector, QdrantConfig, WatchConfig,
+    };
 
     fn test_config(base_url: &str) -> Config {
         Config {
@@ -138,6 +145,7 @@ mod tests {
                 collection: "projects".into(),
             },
             embedding: EmbeddingConfig {
+                backend: EmbeddingBackend::Ollama,
                 url: base_url.to_string(),
                 vectors: vec![
                     NamedVector {

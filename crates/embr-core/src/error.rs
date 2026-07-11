@@ -27,6 +27,9 @@ pub enum Error {
     #[error("ollama: {0}")]
     Ollama(String),
 
+    #[error("openai-compatible embeddings: {0}")]
+    OpenAi(String),
+
     #[error("qdrant: {0}")]
     Qdrant(String),
 

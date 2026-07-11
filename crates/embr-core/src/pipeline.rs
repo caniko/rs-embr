@@ -9,8 +9,8 @@ use sha2::{Digest, Sha256};
 use uuid::Uuid;
 
 use crate::chunker::{Chunker, LineChunker};
-use crate::config::Config;
-use crate::embed::{Embedder, OllamaClient};
+use crate::config::{Config, EmbeddingBackend, EmbeddingConfig};
+use crate::embed::{Embedder, OllamaClient, OpenAiClient};
 use crate::state::StateStore;
 use crate::store::qdrant::{Point, QdrantStore};
 use crate::{Error, Result};
@@ -44,7 +44,7 @@ impl Pipeline {
     pub fn new(cfg: Config, state_db_path: &Path) -> Result<Self> {
         let chunker: Box<dyn Chunker> =
             Box::new(LineChunker::new(cfg.chunking.max_lines, cfg.chunking.overlap));
-        let embedder: Arc<dyn Embedder> = Arc::new(OllamaClient::new(&cfg.embedding.url));
+        let embedder = make_embedder(&cfg.embedding);
         let store = QdrantStore::new(&cfg.qdrant.url, &cfg.qdrant.collection);
         let state = StateStore::open(state_db_path)?;
         Ok(Self {
@@ -230,6 +230,13 @@ impl Pipeline {
         stats.files_indexed += 1;
         stats.chunks_upserted += n;
         Ok(())
+    }
+}
+
+fn make_embedder(cfg: &EmbeddingConfig) -> Arc<dyn Embedder> {
+    match cfg.backend {
+        EmbeddingBackend::Ollama => Arc::new(OllamaClient::new(&cfg.url)),
+        EmbeddingBackend::Openai => Arc::new(OpenAiClient::new(&cfg.url)),
     }
 }
 

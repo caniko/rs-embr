@@ -39,14 +39,24 @@ pub struct QdrantConfig {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct EmbeddingConfig {
-    /// Ollama base URL (e.g. `http://localhost:11434`).
+    #[serde(default)]
+    pub backend: EmbeddingBackend,
+    /// Base URL for the selected embedding API.
     pub url: String,
     /// Named vectors produced per chunk. Each entry becomes one named
     /// vector in the qdrant collection; every chunk is embedded by all of
-    /// them. `name` is the qdrant vector name; `model` is the ollama model
+    /// them. `name` is the qdrant vector name; `model` is the model
     /// identifier; `dim` is the vector dimension (must match the model's
     /// output).
     pub vectors: Vec<NamedVector>,
+}
+
+#[derive(Debug, Clone, Copy, Default, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum EmbeddingBackend {
+    #[default]
+    Ollama,
+    Openai,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

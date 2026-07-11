@@ -1,8 +1,10 @@
 //! Embedding backends.
 
 pub mod ollama;
+pub mod openai;
 
 pub use ollama::OllamaClient;
+pub use openai::OpenAiClient;
 
 use async_trait::async_trait;
 

@@ -39,6 +39,7 @@
       collection = cfg.qdrant.collection;
     };
     embedding = {
+      backend = cfg.embedding.backend;
       url = cfg.embedding.url;
       vectors = cfg.embedding.vectors;
     };
@@ -116,7 +117,12 @@ in {
       url = lib.mkOption {
         type = lib.types.str;
         default = "http://localhost:11434";
-        description = "Ollama base URL.";
+        description = "Base URL for the selected embedding API.";
+      };
+      backend = lib.mkOption {
+        type = lib.types.enum ["ollama" "openai"];
+        default = "ollama";
+        description = "Embedding API protocol.";
       };
       vectors = lib.mkOption {
         type = lib.types.listOf namedVectorSubmodule;

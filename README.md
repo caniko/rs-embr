@@ -1,7 +1,7 @@
 # embr
 
 <!-- simit:badges:start -->
-![CI](https://img.shields.io/badge/CI-drift-2088ff) [![Nix](https://img.shields.io/badge/Nix-managed-5277c3)](flake.nix) [![crates.io](https://img.shields.io/badge/crates.io-ready-f46623)](https://crates.io/crates/embr-cli)
+![CI](https://img.shields.io/badge/CI-managed-2088ff) [![Nix](https://img.shields.io/badge/Nix-managed-5277c3)](flake.nix) [![crates.io](https://img.shields.io/badge/crates.io-ready-f46623)](https://crates.io/crates/embr-cli)
 <!-- simit:badges:end -->
 
 Declarative project code embedding indexer. Walks a list of projects,
@@ -40,6 +40,7 @@ collection = "projects"
 
 [embedding]
 url = "http://localhost:11434"
+backend = "ollama"
 
 [[embedding.vectors]]
 name = "text"
@@ -62,6 +63,10 @@ interval_secs = 30
 
 All named vectors must currently share the same dimension. The pipeline
 creates the qdrant collection on first run if absent.
+
+For an OpenAI-compatible local server such as llama-swap, set the backend to
+openai and point the URL at its base URL, for example
+http://127.0.0.1:8013/v1. No API key is required for the local deployment.
 
 ## NixOS module
 

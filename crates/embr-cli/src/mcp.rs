@@ -69,7 +69,9 @@ pub async fn run(cfg: Config) -> Result<()> {
 
 #[cfg(test)]
 mod tests {
-    use embr_core::config::{Config, EmbeddingConfig, NamedVector, QdrantConfig, WatchConfig};
+    use embr_core::config::{
+        Config, EmbeddingBackend, EmbeddingConfig, NamedVector, QdrantConfig, WatchConfig,
+    };
     use mockito::{Matcher, Server};
     use serde_json::json;
     use std::path::PathBuf;
@@ -83,6 +85,7 @@ mod tests {
                 collection: "projects".into(),
             },
             embedding: EmbeddingConfig {
+                backend: EmbeddingBackend::Ollama,
                 url: base_url.to_string(),
                 vectors: vec![NamedVector {
                     name: "code".into(),
