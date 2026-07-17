@@ -2,6 +2,7 @@
   description = "embr — declarative project code embedding indexer";
 
   inputs = {
+    rs-harbor.url = "git+https://codeberg.org/caniko/rs-harbor.git?ref=trunk&rev=9bfa8bdb0ecb22d7bc11448665f7fbaebae7a759";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
     crane.url = "github:ipetkov/crane";
@@ -17,6 +18,7 @@
 
   outputs = inputs @ {
     self,
+    rs-harbor,
     nixpkgs,
     flake-parts,
     crane,
@@ -43,6 +45,13 @@
           pkgsWithRust.rust-bin.fromRustupToolchainFile ./rust-toolchain.toml;
 
         craneLib = (crane.mkLib pkgs).overrideToolchain (_: rustToolchain);
+        buildCache = rs-harbor.lib.mkBuildCachePolicy {
+          inherit pkgs;
+          sccachePackage = rs-harbor.packages.${system}.sccache;
+          cacheRoot = null;
+          namespaceScope = "canix-rust";
+          namespaceGeneration = 5;
+        };
 
         # Include the Cargo workspace and nothing else (no nix/, no docs,
         # no target/) so caching is stable.
@@ -61,7 +70,7 @@
         # Cache compiled deps separately from workspace sources.
         cargoArtifacts = craneLib.buildDepsOnly commonArgs;
 
-        embr = craneLib.buildPackage (commonArgs
+        embr = buildCache.withRustCache { package = craneLib.buildPackage (commonArgs
           // {
             inherit cargoArtifacts;
             cargoExtraArgs = "-p embr-cli";
@@ -75,7 +84,7 @@
               wrapProgram $out/bin/embr \
                 --prefix PATH : ${pkgs.lib.makeBinPath [pkgs.git]}
             '';
-          });
+          }); };
         website = plinth.lib.${system}.mkProjectSite {
           pname = "embr-website";
           domain = "embr.tartanoglu.com";
