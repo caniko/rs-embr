@@ -62,7 +62,7 @@ jobs:
         run: nix develop -c cargo test -p embr-core
 
       - name: Package crate
-        run: nix develop -c cargo package -p embr-core
+        run: nix develop -c cargo package -p embr-core --allow-dirty --list
   codeberg-small:
     needs: [atlas-nix-trusted]
     runs-on: codeberg-small
