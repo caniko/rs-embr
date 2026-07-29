@@ -1,6 +1,6 @@
 [site]
 title = "embr"
-description = "Declarative project code embedding indexer. Walks a list of projects,"
+description = "Declarative project code embedding indexer that walks a list of projects, chunks source files, embeds them, and upserts named vectors into Qdrant."
 base_url = "/"
 footer_note = "Generated from repository metadata by the plinth-project FOSS sweep."
 
@@ -19,13 +19,13 @@ href = "ssh://git@codeberg.org/caniko/rs-embr.git"
 [[pages]]
 slug = "index"
 title = "embr"
-description = "Declarative project code embedding indexer. Walks a list of projects,"
+description = "Declarative project code embedding indexer that walks a list of projects, chunks source files, embeds them, and upserts named vectors into Qdrant."
 
 [[pages.sections]]
 type = "hero"
 title = "embr"
-tagline = "Declarative project code embedding indexer. Walks a list of projects,"
-subtitle = "Declarative project code embedding indexer. Walks a list of projects,"
+tagline = "Declarative project code embedding indexer"
+subtitle = "Walks projects, embeds source chunks, and upserts named vectors into Qdrant."
 
 [[pages.sections.ctas]]
 label = "View source"
@@ -43,4 +43,3 @@ description = "Project technology detected from repository manifests."
 [[pages.sections.features]]
 title = "Nix"
 description = "Project technology detected from repository manifests."
-
