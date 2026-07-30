@@ -41,9 +41,9 @@
           inherit system;
           overlays = [(import rust-overlay)];
         };
-        rustToolchain = rs-harbor.lib.mkToolchain { toolchainProfile = "stable"; };
+        toolchain = rs-harbor.lib.mkToolchain { inherit pkgs; toolchainProfile = "stable"; };
 
-        craneLib = (crane.mkLib pkgs).overrideToolchain (_: rustToolchain);
+        craneLib = toolchain.craneLib;
         buildCache = rs-harbor.lib.mkBuildCachePolicy {
           inherit pkgs;
           sccachePackage = rs-harbor.packages.${system}.sccache;
