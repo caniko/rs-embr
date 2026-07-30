@@ -2,7 +2,7 @@
   description = "embr — declarative project code embedding indexer";
 
   inputs = {
-    rs-harbor.url = "git+https://codeberg.org/caniko/rs-harbor.git?ref=trunk&rev=9bfa8bdb0ecb22d7bc11448665f7fbaebae7a759";
+    rs-harbor.url = "git+https://codeberg.org/caniko/rs-harbor.git?ref=trunk&rev=c26b735eede8078f795651c4a9cbf0be8733b221";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
     crane.url = "github:ipetkov/crane";
@@ -41,8 +41,7 @@
           inherit system;
           overlays = [(import rust-overlay)];
         };
-        rustToolchain =
-          pkgsWithRust.rust-bin.fromRustupToolchainFile ./rust-toolchain.toml;
+        rustToolchain = rs-harbor.lib.mkToolchain { toolchainProfile = "stable"; };
 
         craneLib = (crane.mkLib pkgs).overrideToolchain (_: rustToolchain);
         buildCache = rs-harbor.lib.mkBuildCachePolicy {
