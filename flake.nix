@@ -2,7 +2,7 @@
   description = "embr — declarative project code embedding indexer";
 
   inputs = {
-    rs-harbor.url = "git+https://codeberg.org/caniko/rs-harbor.git?ref=trunk&rev=c26b735eede8078f795651c4a9cbf0be8733b221";
+    rs-harbor.url = "github:caniko/rs-harbor/e2778ff3beca1bd4c1f5183313251d1fb5b46dd6";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
     crane.url = "github:ipetkov/crane";
@@ -50,6 +50,12 @@
           cacheRoot = null;
           namespaceScope = "canix-rust";
           namespaceGeneration = 5;
+        };
+        atticAdapter = rs-harbor.lib.mkAdapter {
+          attic = {
+            endpoint = "https://attic.candee.baby";
+            cache = "canix";
+          };
         };
 
         # Include the Cargo workspace and nothing else (no nix/, no docs,
@@ -102,8 +108,15 @@
           site = website;
         };
 
-        apps.deploy-pages = plinth.lib.${system}.mkDeployPagesApp {
-          domain = "embr.tartanoglu.com";
+        apps = {
+          push-flake-inputs = rs-harbor.lib.mkAtticPush {
+            inherit pkgs;
+            adapter = atticAdapter;
+            flake = ".";
+          };
+          deploy-pages = plinth.lib.${system}.mkDeployPagesApp {
+            domain = "embr.tartanoglu.com";
+          };
         };
 
         checks = {

@@ -1,3 +1,10 @@
+[prebuild]
+publish_attic = true
+attic_app = ".#push-flake-inputs"
+
+[prebuild.system_runners]
+"x86_64-linux" = "ubuntu-24.04"
+
 [ci]
 runtime = "nix"
 runner = "codefloe-global"
@@ -10,3 +17,9 @@ publish_crates = true
 [ci.pages]
 repo = "caniko/rs-embr"
 canonical_domain = "embr.tartanoglu.com"
+
+[release.attic]
+cache = "canix"
+url = "https://attic.candee.baby"
+token_name = "rs-embr"
+token_secret = "ATTIC_TOKEN"
