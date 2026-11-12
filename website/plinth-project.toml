@@ -1,45 +1,85 @@
 [site]
 title = "embr"
-description = "Declarative project code embedding indexer that walks a list of projects, chunks source files, embeds them, and upserts named vectors into Qdrant."
+description = "A declarative indexer that walks the projects named in one TOML file, chunks their source, embeds each chunk with local models, and upserts named vectors into Qdrant for semantic code search."
 base_url = "/"
-footer_note = "Generated from repository metadata by the plinth-project FOSS sweep."
 
 [[nav]]
 label = "Overview"
 href = "#overview"
 
 [[nav]]
+label = "Quick start"
+href = "#quick-start"
+
+[[nav]]
 label = "Source"
-href = "ssh://git@codeberg.org/caniko/rs-embr.git"
+href = "https://codeberg.org/caniko/rs-embr"
 
 [[footer_links]]
 label = "Source"
-href = "ssh://git@codeberg.org/caniko/rs-embr.git"
+href = "https://codeberg.org/caniko/rs-embr"
 
 [[pages]]
 slug = "index"
 title = "embr"
-description = "Declarative project code embedding indexer that walks a list of projects, chunks source files, embeds them, and upserts named vectors into Qdrant."
+description = "A declarative indexer that walks the projects named in one TOML file, chunks their source, embeds each chunk with local models, and upserts named vectors into Qdrant for semantic code search."
 
 [[pages.sections]]
 type = "hero"
 title = "embr"
-tagline = "Declarative project code embedding indexer"
-subtitle = "Walks projects, embeds source chunks, and upserts named vectors into Qdrant."
+tagline = "Semantic search across your own source repositories"
+subtitle = "A declarative indexer: list projects in one TOML file, let it chunk and embed their source with local models, and query the resulting Qdrant collection from a terminal or an MCP client."
 
 [[pages.sections.ctas]]
 label = "View source"
-href = "ssh://git@codeberg.org/caniko/rs-embr.git"
+href = "https://codeberg.org/caniko/rs-embr"
 primary = true
+
+[[pages.sections.ctas]]
+label = "Quick start"
+href = "#quick-start"
 
 [[pages.sections]]
 type = "feature_grid"
 id = "overview"
 
 [[pages.sections.features]]
-title = "Rust"
-description = "Project technology detected from repository manifests."
+title = "Index only what changed"
+description = "One TOML file names a projects root and the projects to walk; embr chunks their source into line windows and records a SHA-256 per file in a local SQLite state DB. A re-run reads only changed files, and points for deleted files are removed per project."
 
 [[pages.sections.features]]
-title = "Nix"
-description = "Project technology detected from repository manifests."
+title = "Several models, one collection"
+description = "Every chunk is embedded once per configured vector and upserted into Qdrant as a named vector, so a text model and a code model can index the same repository side by side. In v1 all named vectors must share one dimension, and the collection is created on first run."
+
+[[pages.sections.features]]
+title = "Query from a terminal or an agent"
+description = "embr mcp serves semantic code search over MCP stdio, and embr search answers the same query locally. Both accept a project name, a path prefix and a hit limit, so an agent can keep a search inside one repository."
+
+[[pages.sections.features]]
+title = "Watch mode without surprises"
+description = "embr watch re-indexes on a polling interval, which behaves the same on a local disk and an NFS mount. embr status prints per-project file counts from the state DB, and embr reset drops that DB without touching the Qdrant collection."
+
+[[pages.sections]]
+type = "install"
+id = "quick-start"
+heading = "Index a project"
+intro = "The config names a projects root, the Qdrant collection and the embedding endpoints: ollama by default, or an OpenAI-compatible server such as llama-swap. Index once for a full pass, or leave watch running; the NixOS module generates the same config and runs the watch under a hardened unit."
+guide_href = "https://codeberg.org/caniko/rs-embr"
+
+[[pages.sections.primary_routes]]
+label = "Index once"
+audience = "Nix flakes, one full pass then exit"
+href = "https://codeberg.org/caniko/rs-embr#install--run"
+command = "nix run github:caniko/rs-embr -- index --config /path/to/embr.toml"
+recommended = true
+
+[[pages.sections.secondary_routes]]
+label = "Watch for changes"
+audience = "Nix flakes, same binary, runs until stopped"
+href = "https://codeberg.org/caniko/rs-embr#install--run"
+command = "nix run github:caniko/rs-embr -- watch --config /path/to/embr.toml"
+
+[[pages.sections.secondary_routes]]
+label = "NixOS module"
+audience = "services.embr, generates the TOML and a dedicated system user"
+href = "https://codeberg.org/caniko/rs-embr#nixos-module"
