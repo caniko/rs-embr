@@ -2,7 +2,7 @@
   description = "embr — declarative project code embedding indexer";
 
   inputs = {
-    rs-harbor.url = "git+ssh://git@github.com/caniko/rs-harbor.git?ref=trunk&rev=05cc4f162b55fa904b687db1821e2463fa813e50";
+    rs-harbor.url = "git+ssh://git@github.com/caniko/rs-harbor.git?ref=trunk&rev=ed89d0b13fc61dd1b2217bf4bba97f32cec27ba7";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
     crane.url = "github:ipetkov/crane";
@@ -50,6 +50,7 @@
           cacheRoot = null;
           namespaceScope = "canix-rust";
           namespaceGeneration = 5;
+          ephemeralFallback = true; # Hosted CI runners have no managed sccache transport.
         };
 
         # Include the Cargo workspace and nothing else (no nix/, no docs,
