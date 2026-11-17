@@ -38,9 +38,9 @@ impl StateStore {
 
     /// Return the stored content hash for `(project, rel_path)`, if any.
     pub fn get(&self, project: &str, rel_path: &str) -> Result<Option<String>> {
-        let mut stmt = self
-            .conn
-            .prepare_cached("SELECT content_hash FROM file_state WHERE project = ?1 AND rel_path = ?2")?;
+        let mut stmt = self.conn.prepare_cached(
+            "SELECT content_hash FROM file_state WHERE project = ?1 AND rel_path = ?2",
+        )?;
         let mut rows = stmt.query(params![project, rel_path])?;
         if let Some(row) = rows.next()? {
             Ok(Some(row.get(0)?))

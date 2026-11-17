@@ -78,10 +78,12 @@ pub fn filter_by_extension<'a>(
 ) -> Vec<&'a String> {
     files
         .iter()
-        .filter(|f| match Path::new(f).extension().and_then(|e| e.to_str()) {
-            Some(ext) => extensions.contains(&ext.to_ascii_lowercase()),
-            None => false,
-        })
+        .filter(
+            |f| match Path::new(f).extension().and_then(|e| e.to_str()) {
+                Some(ext) => extensions.contains(&ext.to_ascii_lowercase()),
+                None => false,
+            },
+        )
         .collect()
 }
 

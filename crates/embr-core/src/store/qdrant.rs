@@ -163,7 +163,11 @@ impl QdrantStore {
 
     /// Delete every point for `project` whose `path` is not in `keep_paths`.
     /// Returns the number of deleted points.
-    pub async fn delete_orphans(&self, project: &str, keep: &std::collections::HashSet<String>) -> Result<usize> {
+    pub async fn delete_orphans(
+        &self,
+        project: &str,
+        keep: &std::collections::HashSet<String>,
+    ) -> Result<usize> {
         let mut total = 0usize;
         let mut offset: Option<serde_json::Value> = None;
         loop {
@@ -178,9 +182,16 @@ impl QdrantStore {
                 "with_vector": false,
             });
             if let Some(off) = &offset {
-                body.as_object_mut().unwrap().insert("offset".into(), off.clone());
+                body.as_object_mut()
+                    .unwrap()
+                    .insert("offset".into(), off.clone());
             }
-            let resp = self.http.post(self.url("/points/scroll")).json(&body).send().await?;
+            let resp = self
+                .http
+                .post(self.url("/points/scroll"))
+                .json(&body)
+                .send()
+                .await?;
             if !resp.status().is_success() {
                 return Err(Error::Qdrant(format!(
                     "scroll: {} {}",
@@ -283,14 +294,16 @@ impl QdrantStore {
         });
 
         if let Some(project) = options.project {
-            body.as_object_mut().expect("query body is an object").insert(
-                "filter".into(),
-                json!({
-                    "must": [
-                        { "key": "project", "match": { "value": project } },
-                    ]
-                }),
-            );
+            body.as_object_mut()
+                .expect("query body is an object")
+                .insert(
+                    "filter".into(),
+                    json!({
+                        "must": [
+                            { "key": "project", "match": { "value": project } },
+                        ]
+                    }),
+                );
         }
 
         let resp = self

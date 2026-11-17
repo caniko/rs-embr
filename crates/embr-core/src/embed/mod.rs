@@ -11,6 +11,6 @@ use async_trait::async_trait;
 use crate::Result;
 
 #[async_trait]
-pub trait Embedder: Send + Sync {
+pub trait Embedder: Send + Sync + std::fmt::Debug {
     async fn embed(&self, model: &str, text: &str) -> Result<Vec<f32>>;
 }
