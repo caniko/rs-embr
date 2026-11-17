@@ -5,11 +5,7 @@ use embr_core::{
     config::Config,
     search::{SearchRequest, SearchResponse, Searcher},
 };
-use rmcp::{
-    Json, ServiceExt,
-    handler::server::wrapper::Parameters,
-    schemars, tool, tool_router,
-};
+use rmcp::{handler::server::wrapper::Parameters, schemars, tool, tool_router, Json, ServiceExt};
 
 #[derive(Debug, Clone)]
 pub struct EmbrMcpServer {
@@ -37,9 +33,7 @@ impl EmbrMcpServer {
 
 #[tool_router(server_handler)]
 impl EmbrMcpServer {
-    #[tool(
-        description = "Semantic code search across the indexed Embr projects collection."
-    )]
+    #[tool(description = "Semantic code search across the indexed Embr projects collection.")]
     pub async fn embr_search_code(
         &self,
         Parameters(request): Parameters<EmbrSearchCodeRequest>,

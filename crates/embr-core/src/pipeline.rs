@@ -42,8 +42,10 @@ pub struct Pipeline {
 
 impl Pipeline {
     pub fn new(cfg: Config, state_db_path: &Path) -> Result<Self> {
-        let chunker: Box<dyn Chunker> =
-            Box::new(LineChunker::new(cfg.chunking.max_lines, cfg.chunking.overlap));
+        let chunker: Box<dyn Chunker> = Box::new(LineChunker::new(
+            cfg.chunking.max_lines,
+            cfg.chunking.overlap,
+        ));
         let embedder = make_embedder(&cfg.embedding);
         let store = QdrantStore::new(&cfg.qdrant.url, &cfg.qdrant.collection);
         let state = StateStore::open(state_db_path)?;
@@ -83,8 +85,10 @@ impl Pipeline {
                 }
                 Err(e) => {
                     tracing::error!(project, error = %e, "index_project failed");
-                    let mut stats = ProjectStats::default();
-                    stats.errors = 1;
+                    let stats = ProjectStats {
+                        errors: 1,
+                        ..Default::default()
+                    };
                     all.insert(project.clone(), stats);
                 }
             }
@@ -101,11 +105,12 @@ impl Pipeline {
             project,
             &self.cfg.chunking.extensions,
         )?;
-        let mut stats = ProjectStats::default();
-        stats.files_total = files.len();
+        let mut stats = ProjectStats {
+            files_total: files.len(),
+            ..Default::default()
+        };
 
-        let keep_paths: HashSet<String> =
-            files.iter().map(|f| f.rel_path.clone()).collect();
+        let keep_paths: HashSet<String> = files.iter().map(|f| f.rel_path.clone()).collect();
 
         for file in &files {
             if let Err(e) = self.index_one_file(project, file, &mut stats).await {
@@ -197,9 +202,7 @@ impl Pipeline {
                     .embedder
                     .embed(&nv.model, &chunk.text)
                     .await
-                    .map_err(|e| {
-                        Error::Ollama(format!("{} chunk {}: {}", file.rel_path, i, e))
-                    })?;
+                    .map_err(|e| Error::Ollama(format!("{} chunk {}: {}", file.rel_path, i, e)))?;
                 if v.len() != nv.dim {
                     return Err(Error::Config(format!(
                         "model {} produced dim {} but config declares {}",

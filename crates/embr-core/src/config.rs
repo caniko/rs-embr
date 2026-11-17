@@ -186,6 +186,9 @@ impl Config {
     }
 
     pub fn named_vector(&self, name: &str) -> Option<&NamedVector> {
-        self.embedding.vectors.iter().find(|vector| vector.name == name)
+        self.embedding
+            .vectors
+            .iter()
+            .find(|vector| vector.name == name)
     }
 }
