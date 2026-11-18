@@ -1,11 +1,13 @@
 [ci]
 runtime = "nix"
-runner = "codefloe-global"
+runner = "ubuntu-latest"
 workspace = true
 step_runners = { cargo-clippy = "codeberg-small", cargo-doc = "codeberg-small", cargo-fmt = "codeberg-tiny", cargo-package = "codeberg-medium", cargo-test = "codeberg-medium", nix-check = "atlas-nix-trusted", quality-tools = "codeberg-small" }
-provider = "crow"
-platform = "forgejo"
+provider = "actions"
+platform = "github"
 publish_crates = true
+all_features = false
+publish_strategy = "members"
 
 [ci.pages]
 repo = "caniko/rs-embr"
