@@ -9,7 +9,7 @@
     # rs-harbor's toolchain profiles name Rust releases its own rust-overlay pin knows.
     rust-overlay.follows = "rs-harbor/rust-overlay";
     plinth = {
-      url = "git+https://codeberg.org/caniko/plinth.git?ref=refs/heads/trunk";
+      url = "git+https://github.com/caniko/plinth.git?ref=refs/heads/trunk";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };

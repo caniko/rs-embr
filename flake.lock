@@ -483,12 +483,12 @@
         "rev": "bfa970d7f38f51515e01092cd7f9fde81eef26ae",
         "revCount": 67,
         "type": "git",
-        "url": "https://codeberg.org/caniko/plinth.git"
+        "url": "https://github.com/caniko/plinth.git"
       },
       "original": {
         "ref": "refs/heads/trunk",
         "type": "git",
-        "url": "https://codeberg.org/caniko/plinth.git"
+        "url": "https://github.com/caniko/plinth.git"
       }
     },
     "root": {
